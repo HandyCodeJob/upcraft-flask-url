@@ -1,4 +1,5 @@
 from flask import Flask, redirect, request, render_template, make_response
+import json
 import requests
 import stripe
 import os
@@ -10,11 +11,9 @@ app.config['DEBUG'] = True
 
 @app.route('/', methods=['GET', 'POST'])
 def sub():
-    print(request)
     if request.method == 'GET':
         return render_template("test.html", email=request.args.get('email'))
     else:
-        print(request.form)
         customer = stripe.Customer.create(
             source=request.form['stripeToken'],  # obtained from Stripe.js
             plan="test_plan",
@@ -23,27 +22,18 @@ def sub():
             },
             email=request.form['email']
         )
-        print(customer)
-        """
-        data = {
-            "customer": {
-                "id": customer.stripe_id,
-                "metafields": [
-                    {
-                        "key": "Premium",
-                        "value": 1,
-                        "value_type": "integer",
-                        "namespace": "global",
-                    }
-                ],
-            },
-        }
-        print(data)
-        shopify = requests.put(url, params=data)
-        """
         customer.subscriptions.create(plan="test_plan")
-
         return redirect("http://www.example.com/done", code=302)
+
+
+@app.route('/stripe', methods=['POST'])
+def stripe_hook():
+    event_json = request.get_json()
+    obj = event_json['data']['object']
+    if event_json['type'] == "invoice.payment_succeeded":
+        customer = stripe.Customer.retrieve(obj['customer'])
+        print("send discount", customer.email)
+    return "", 200
 
 
 if __name__ == '__main__':
