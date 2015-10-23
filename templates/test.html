@@ -14,42 +14,41 @@
     // This identifies your website in the createToken call below
     Stripe.setPublishableKey('pk_test_gtvJzbdAazjzQcFKV3vzTLrW');
     var stripeResponseHandler = function(status, response) {
-      var $form = $('#payment-form');
-      if (response.error) {
-        // Show the errors on the form
-        $form.find('.payment-errors').text(response.error.message);
-        $form.find('button').prop('disabled', false);
-      } else {
-        // token contains id, last4, and card type
-        var token = response.id;
-        // Insert the token into the form so it gets submitted to the server
-        $form.append($('<input type="hidden" name="stripeToken" />').val(token));
-	$form.append($('<input type="hidden" name="birthday" />').val($('#birthday').val()));
-	$form.append($('<input type="hidden" name="birthday" />').val($('#craft-type').val()));
-	$form.append($('<input type="hidden" name="email" />').val("{{ email }}"));
-        // and re-submit
-        $form.get(0).submit();
-      }
+      var $form = $('#stripe-payment-form');
+        if (response.error) {
+          // Show the errors on the form
+          $form.find('.payment-errors').text(response.error.message);
+          $form.find('button').prop('disabled', false);
+        } else {
+          // token contains id, last4, and card type
+          var token = response.id;
+          // Insert the token into the form so it gets submitted to the server
+          $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+          // and re-submit
+          $form.get(0).submit();
+        }
     };
     jQuery(function($) {
-      $('#payment-form').submit(function(e) {
+      $('#stripe-payment-form').submit(function(event) {
         var $form = $(this);
-        // Disable the submit button to prevent repeated clicks
-        $form.find('button').prop('disabled', true);
-        Stripe.card.createToken($form, stripeResponseHandler);
+          // Disable the submit button to prevent repeated clicks
+          $form.find('button').prop('disabled', true);
+          Stripe.card.createToken({
+             number: $('#number').val(),
+             cvc: $('#cvc').val(),
+             exp_month: $('#month').val(),
+             exp_year: $('#year').val()
+          }, stripeResponseHandler);
         // Prevent the form from submitting with the default action
         return false;
       });
     });
-$(document).ready(function () {
-
-    // set up the page, hide all forms, disable their controls
-    $(".form-payment").hide()
-        .find(":input")
-        .attr("disabled", "disabled");
-
-    $("#select-payment").change(function () {
-
+    $(document).ready(function () {
+      // set up the page, hide all forms, disable their controls
+      $(".form-payment").hide()
+          .find(":input")
+          .attr("disabled", "disabled");
+      $("#select-payment").change(function () {
         // hide all forms, disabled their inputs
         $(".form-payment:not(#" + this.value + ")").hide()
             .find(":input")
@@ -59,8 +58,8 @@ $(document).ready(function () {
         $("#" + this.value).show()
             .find(":input")
             .removeAttr("disabled");
+      });
     });
-});
   </script>
 </head>
 <body>
@@ -74,13 +73,14 @@ $(document).ready(function () {
 <form class="form-payment" action="" method="POST" name='stripe-payment-form' id="stripe-payment-form"> <span class="payment-errors"></span>
 
     <div class="clearfix large_form">
-        <label class="login" for="birthday">When is your birthday?</label>
-        <input id="birthday" type="text"value="" />
+        <input type="hidden" name="email" value="{{ email }}">
+        <label class="login" >When is your birthday?</label>
+        <input id="birthday" type="text" name="birthday" value="" />
         <p>We'd love to celebrate it with you!) mm/dd/yy</p>
     </div>
     <div class="clearfix large_form">
-        <label class="login" for="craft-type">Craft mainly interested in:</label>
-        <select id="craft-type" value="">
+        <label class="login">Craft mainly interested in:</label>
+        <select id="craft-type" name="craft-type" value="">
             <option value="">-- Please Choose --</option>
             <option value="Sewing Children's Clothing">Sewing Children's Clothing</option>
             <option value="Sewing Women's Clothing">Sewing Women's Clothing</option>
@@ -98,22 +98,22 @@ $(document).ready(function () {
     <div class="form-row">
         <label> <span>Card Number</span>
 
-            <input type="text" size="20" data-stripe="number" />
+            <input type="text" id="number" size="20" data-stripe="number" />
         </label>
     </div>
     <div class="form-row">
         <label> <span>CVC</span>
 
-            <input type="text" size="4" data-stripe="cvc" />
+            <input type="text" id="cvc" size="4" data-stripe="cvc" />
         </label>
     </div>
     <div class="form-row">
         <label> <span>Expiration (MM/YYYY)</span>
 
-            <input type="text" size="2" data-stripe="exp-month" />
+            <input type="text" id="month" size="2" data-stripe="exp-month" />
         </label> <span> / </span>
 
-        <input type="text" size="4" data-stripe="exp-year" />
+        <input type="text" id= "year" size="4" data-stripe="exp-year" />
     </div>
     <button type="submit">Submit Stripe Payment</button>
 </form>
@@ -154,4 +154,3 @@ $(document).ready(function () {
 </body>
 
 </html>
-

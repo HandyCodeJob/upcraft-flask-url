@@ -1,17 +1,19 @@
-from flask import Flask, redirect, request, render_template
+from flask import Flask, redirect, request, render_template, make_response
 import requests
 import stripe
 import os
 
 stripe.api_key = "sk_test_hzmKNeyNVEbyi1BWiTRwRHMe"
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
 
 @app.route('/', methods=['GET', 'POST'])
-def hello():
+def sub():
+    print(request)
     if request.method == 'GET':
         return render_template("test.html", email=request.args.get('email'))
-    elif request.method == 'POST':
+    else:
         print(request.form)
         customer = stripe.Customer.create(
             source=request.form['stripeToken'],  # obtained from Stripe.js
