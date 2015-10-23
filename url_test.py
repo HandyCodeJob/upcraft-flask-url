@@ -16,10 +16,13 @@ def hello():
         customer = stripe.Customer.create(
             source=request.form['stripeToken'],  # obtained from Stripe.js
             plan="test_plan",
-            metadata=request.form['birthday'],
+            metadata={
+                'birthday': request.form['birthday'],
+            },
             email=request.form['email']
         )
         print(customer)
+        """
         data = {
             "customer": {
                 "id": customer.stripe_id,
@@ -35,7 +38,8 @@ def hello():
         }
         print(data)
         shopify = requests.put(url, params=data)
-        print(customer, shopify)
+        """
+        customer.subscriptions.create(plan="test_plan")
 
         return redirect("http://www.example.com/done", code=302)
 
