@@ -9,11 +9,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return render_template("test.html")
-
-@app.route('/subscribe', methods=['POST'])
-def subscribe():
-    print(request.form)
+    if request.method == 'GET':
+        return render_template("test.html")
     if request.method == 'POST':
         customer = stripe.Customer.create(
             source=request.form['stripeToken'],  # obtained from Stripe.js
