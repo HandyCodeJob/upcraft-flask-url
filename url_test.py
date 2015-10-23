@@ -7,7 +7,7 @@ stripe.api_key = "sk_test_hzmKNeyNVEbyi1BWiTRwRHMe"
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def hello():
     if request.method == 'GET':
         return render_template("test.html")
