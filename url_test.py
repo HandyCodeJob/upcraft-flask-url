@@ -14,6 +14,7 @@ def sub():
     if request.method == 'GET':
         return render_template("test.html", email=request.args.get('email'))
     else:
+        print("sub!")
         customer = stripe.Customer.create(
             source=request.form['stripeToken'],  # obtained from Stripe.js
             plan="test_plan",
