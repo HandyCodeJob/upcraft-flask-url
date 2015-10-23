@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def hello():
     if request.method == 'GET':
-        return render_template("test.html")
+        return render_template("test.html", email=request.args.get('email'))
     elif request.method == 'POST':
         print(request.form)
         customer = stripe.Customer.create(
