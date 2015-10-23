@@ -38,8 +38,6 @@ def subscribe():
         print(customer, shopify)
 
         return redirect("http://www.example.com/done", code=302)
-    else:
-        return redirect("http://www.example.com", code=302)
 
 
 if __name__ == '__main__':
