@@ -23,7 +23,7 @@ def subscribe():
         )
         data = {
             "customer": {
-                "id": request.form['id'],
+                "id": customer.stripe_id,
                 "metafields": [
                     {
                         "key": "Premium",
