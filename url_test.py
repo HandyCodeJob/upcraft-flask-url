@@ -13,6 +13,7 @@ def hello():
 
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
+    print(request)
     if request.method == 'POST':
         customer = stripe.Customer.create(
             source=request.form['stripeToken'],  # obtained from Stripe.js
