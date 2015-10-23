@@ -11,13 +11,15 @@ app = Flask(__name__)
 def hello():
     if request.method == 'GET':
         return render_template("test.html")
-    if request.method == 'POST':
+    elif request.method == 'POST':
+        print(request.form)
         customer = stripe.Customer.create(
             source=request.form['stripeToken'],  # obtained from Stripe.js
             plan="test_plan",
             metadata=request.form['birthday'],
             email=request.form['email']
         )
+        print(customer)
         data = {
             "customer": {
                 "id": customer.stripe_id,
@@ -31,6 +33,7 @@ def hello():
                 ],
             },
         }
+        print(data)
         shopify = requests.put(url, params=data)
         print(customer, shopify)
 
