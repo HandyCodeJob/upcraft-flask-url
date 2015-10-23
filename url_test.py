@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, render_template
 import requests
 import stripe
 import os
@@ -9,8 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return redirect("http://www.example.com", code=302)
-
+    return render_template("test.html")
 
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
