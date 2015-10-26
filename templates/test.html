@@ -12,7 +12,7 @@
 
   <script type="text/javascript">
     // This identifies your website in the createToken call below
-    Stripe.setPublishableKey('pk_test_gtvJzbdAazjzQcFKV3vzTLrW');
+    Stripe.setPublishableKey('{{ STRIPE_API_PUBLIC_KEY }}');
     var stripeResponseHandler = function(status, response) {
       var $form = $('#stripe-payment-form');
         if (response.error) {
@@ -76,7 +76,7 @@
         <input type="hidden" name="email" value="{{ email }}">
         <label class="login" >When is your birthday?</label>
         <input id="birthday" type="text" name="birthday" value="" />
-        <p>We'd love to celebrate it with you!) mm/dd/yy</p>
+        <p>We'd love to celebrate it with you! mm/dd/yy</p>
     </div>
     <div class="clearfix large_form">
         <label class="login">Craft mainly interested in:</label>
@@ -128,7 +128,7 @@
     <div class="clearfix large_form">
         <label class="login" for="birthday">When is your birthday?</label>
         <input type="text" name="os0" maxlength="200" value="" />
-        <p>We'd love to celebrate it with you!) mm/dd/yy</p>
+        <p>We'd love to celebrate it with you! mm/dd/yy</p>
     </div>
     <div class="clearfix large_form">    
         <label class="login" for="craft-type">Craft mainly interested in:</label>
