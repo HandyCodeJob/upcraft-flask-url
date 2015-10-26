@@ -1,8 +1,12 @@
 Flask==0.10.1
 Jinja2==2.8
 MarkupSafe==0.23
+PyYAML==3.11
+ShopifyAPI==2.1.5
 Werkzeug==0.10.4
 gunicorn==19.3.0
 itsdangerous==0.24
+pyactiveresource==2.1.2
 requests==2.7.0
+six==1.10.0
 stripe==1.27.1

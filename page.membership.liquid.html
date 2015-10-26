@@ -1,0 +1,15 @@
+<!-- After {{ page.content }}, add -->
+ 
+    {% if page.title == 'Get Rewards' %} <!-- use same title as the rewards page you created -->
+        {% include 'sam_account' %}
+    {% endif %}
+
+<div class="container cf">
+  <div class="page-header cf">
+    <h1 class="majortitle">{{ page.title }}</h1>
+    <div class="social-area">{% include 'social-sharing' %}</div>
+  </div>
+  <div class="user-content row-spacing {% if settings.lightbox_imgs %}lightboximages{% endif %}">
+    <iframe frameborder='0' noresize='noresize' style='position: absolute; background: transparent; width: 100%; height:100%;' src="https://upcraft-membership.herokuapp.com/?email={{customer.email}}" frameborder="0"></iframe>
+  </div>
+</div>
