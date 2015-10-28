@@ -1,5 +1,7 @@
 from flask import Flask, redirect, request, render_template
 import shopify
+import requests
+import re
 import stripe
 import os
 
@@ -9,6 +11,19 @@ SHOPIFY_API_KEY = os.environ['SHOPIFY_API_KEY']
 SHOPIFY_PASSWORD = os.environ['SHOPIFY_PASSWORD']
 URL = "https://%s:%s@upcraft-club.myshopify.com/admin" % (SHOPIFY_API_KEY,
                                                           SHOPIFY_PASSWORD)
+nginx_line= """        rewrite "(?i)/%s/%s" http://upcraftclub.com/cart/%i:1?ref=%s#_l_1r ;\n"""
+nginx_conf = """server {
+        listen       80 default_server;
+        server_name dev.handycodejob.com;
+%s        rewrite "^/?$" http://upcraftclub.com/#_l_1r ;
+}"""
+
+stores = [
+    'stitchdsm',
+    'shop_another',
+    'blah',
+]
+
 
 stripe.api_key = STRIPE_API_SECRET_KEY
 shopify.ShopifyResource.set_site(URL)
@@ -70,6 +85,55 @@ def add_tag(customer, tag='Premium'):
         tags = tag
     customer.attributes.update({'tags': tags})
     return customer.save()
+
+@app.route('/', methods=['GET', 'POST'])
+def get_product():
+    if request.method == GET:
+        return ""
+    else:
+        product_url = request.form['url']
+
+def get_nginx(urls, stores=stores):
+    """Given an list of urls (or product handels) this will return the proper
+    nginx config to have each of the stores to have each product"""
+    product_ids = []
+    lines = ''
+    for product_url in urls:
+        if product_url.startswith("http"):
+            product = product_url.split('/')[-1]
+        else:
+            product = product_url
+            product_url = "http://upcraftclub.com/products/%s" % product
+        resp = requests.get(product_url)
+        product_regex = re.search(r'"variants":\[{"id":(?P<id>\d+),"title', resp.text)
+        product_id = int(product_regex.group('id'))
+        lines += "        #%s: %i\n" % (product, product_id,)
+        product_ids.append(product_id)
+        for store in stores:
+            line = nginx_line % (store, product, product_id, store,)
+            lines += line
+    nginx_out = nginx_conf % lines
+    print(nginx_out)
+
+
+def get_nginx_capture(urls, stores=stores):
+    """Given an list of urls (or product handels) this will return the proper
+    nginx config to have each of the stores to have each product"""
+    product_ids = []
+    lines = ''
+    for product_url in urls:
+        if product_url.startswith("http"):
+            product = product_url.split('/')[-1]
+        else:
+            product = product_url
+            product_url = "http://upcraftclub.com/products/%s" % product
+        resp = requests.get(product_url)
+        product_regex = re.search(r'"variants":\[{"id":(?P<id>\d+),"title', resp.text)
+        product_id = int(product_regex.group('id'))
+        lines += """        rewrite "(?i)/([\-\w]+)/%s" http://upcraftclub.com/cart/%i:1?ref=$1#_l_1r ;\n""" % (product, product_id,)
+    nginx_out = nginx_conf % lines
+    print(nginx_out)
+
 
 
 if __name__ == '__main__':
