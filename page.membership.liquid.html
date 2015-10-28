@@ -9,7 +9,15 @@
     <h1 class="majortitle">{{ page.title }}</h1>
     <div class="social-area">{% include 'social-sharing' %}</div>
   </div>
+  {% if customer %}
+  <p>You need to sign up for an account first!</p>
+  <a href='http://upcraftclub.com/account/register'>Sign up here!</a>
+  {% else %}
+
   <div class="user-content row-spacing {% if settings.lightbox_imgs %}lightboximages{% endif %}">
-    <iframe frameborder='0' noresize='noresize' style='position: absolute; background: transparent; width: 100%; height:100%;' src="https://upcraft-membership.herokuapp.com/?email={{customer.email}}" frameborder="0"></iframe>
+    <iframe frameborder='0' noresize='noresize' style='position: absolute; background: 
+        transparent; width: 100%; height:100%;' src="https://upcraft-membership.herokuapp.com/?email={{customer.email}}" 
+        frameborder="0"></iframe>
   </div>
+  {% endif %}
 </div>
